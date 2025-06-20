@@ -7,3 +7,4 @@ This repository presents Urban-Stormwater-GNN-Surrogate, a novel end-to-end Grap
 - A novel end-to-end GNN surrogate model (GNN-SWS) is developed for rainfall-driven hydraulic prediction in stormwater systems.
 - The model jointly learns rainfall-driven inflow dynamics and flow routing at junctions and conduits directly from rainfall inputs.
 - Physics-guided constraints and the pushforward training strategy are integrated to improve physical consistency and long-term forecast stability.
+- A heterogeneous message-passing architecture distinguishes node types based on subcatchment connectivity, providing a structured hydrologic representation.
