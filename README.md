@@ -22,4 +22,3 @@ This module automates the creation of training and evaluation data for the GNN-S
   
 All outputs are saved in structured text files under **export_data/**, which serve as inputs to the GNN model.
 
-<pre> <code> ``` GNN-SWS/ ├── data_preparation/ │ ├── swmm_run.py # Main script to run SWMM and extract data │ ├── swmm_utils.py # Supporting utilities for simulation and parsing │ └── rainfall_data/ # Input .dat files for rainfall events │ ├── export_data/ # Generated outputs from data_preparation/ │ ├── constant_features/ # Static geometry + hydraulic features │ └── time_series/ # Dynamic simulation outputs (depth, flow, etc.) ``` </code> </pre>
