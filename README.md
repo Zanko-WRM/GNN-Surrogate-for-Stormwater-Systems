@@ -12,6 +12,7 @@ This repository presents Urban-Stormwater-GNN-Surrogate, a novel end-to-end Grap
 - Physics-guided constraints and the pushforward training strategy are integrated to improve physical consistency and long-term forecast stability.
 - A heterogeneous message-passing architecture distinguishes node types based on subcatchment connectivity, providing a structured hydrologic representation.
 
+
 # Data Preparation
 This module automates the creation of training and evaluation data for the GNN-SWS model using the SWMM hydraulic simulator.
 
@@ -20,3 +21,13 @@ This module automates the creation of training and evaluation data for the GNN-S
 - **Time Series Outputs**: Collects time-dependent variables (e.g., inflow, depth, runoff, flow) from simulation results for each event.
   
 All outputs are saved in structured text files under **export_data/**, which serve as inputs to the GNN model.
+
+GNN-SWS/
+├── data_preparation/
+│   ├── swmm_run.py                  # Main script to run SWMM and extract data
+│   ├── swmm_utils.py               # Supporting utilities for simulation and parsing
+│   └── rainfall_data/              # Input .dat files for rainfall events
+│
+├── export_data/                    # Generated outputs from data_preparation/
+│   ├── constant_features/          # Static geometry + hydraulic features
+│   └── time_series/                # Dynamic simulation outputs (depth, flow, etc.)
