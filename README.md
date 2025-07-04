@@ -15,7 +15,8 @@ This repository presents Urban-Stormwater-GNN-Surrogate, a novel end-to-end Grap
 # Data Preparation
 This module automates the creation of training and evaluation data for the GNN-SWS model using the SWMM hydraulic simulator.
 
-- Simulations: Runs SWMM for multiple rainfall events by modifying the base .inp file and attaching corresponding .dat rainfall files.
-- Static Features: Extracts geometric and hydraulic properties of subcatchments, junctions, outfalls, and conduits from the SWMM model.
-- Time Series Outputs: Collects time-dependent variables (e.g., inflow, depth, runoff, flow) from simulation results for each event.
-All outputs are saved in structured text files under export_data/, which serve as inputs to the GNN model.
+- **Simulations**: Runs SWMM for multiple rainfall events by modifying the base *.inp* file and attaching corresponding *.dat* rainfall files.
+- **Static Features**: Extracts geometric and hydraulic properties of subcatchments, junctions, outfalls, and conduits from the SWMM model.
+- **Time Series Outputs**: Collects time-dependent variables (e.g., inflow, depth, runoff, flow) from simulation results for each event.
+  
+All outputs are saved in structured text files under **export_data/**, which serve as inputs to the GNN model.
