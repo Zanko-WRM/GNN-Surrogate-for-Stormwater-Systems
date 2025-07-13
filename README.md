@@ -109,3 +109,51 @@ The dashboard offers the following key functionalities:
 The dashboard is designed to be a powerful tool for researchers and practitioners to intuitively understand the GNN-SWS model's behavior, identify areas of strong performance or potential limitations, and gain deeper insights into urban stormwater system dynamics.
 
 To run the dashboard, execute `Dashboard.py` directly after training the model and generating predictions.
+## Getting Started
+
+This section guides you through setting up the environment and running the GNN-SWS model, from data preparation to training, testing, and interactive visualization.
+
+### Prerequisites
+
+* **Python**: Version 3.9 or higher is recommended.
+* **SWMM**: EPA Storm Water Management Model (SWMM) is required to generate the initial simulation data. Ensure you have a functional SWMM installation available on your system, as the data preparation step involves running SWMM simulations.
+* **NVIDIA GPU with CUDA**: For training the model efficiently, an NVIDIA GPU with CUDA Toolkit installed is highly recommended. The provided `requirements.txt` includes PyTorch and PyTorch Geometric versions compiled with CUDA support.
+
+### Environment Setup
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone [https://github.com/YourUsername/Urban-Stormwater-GNN-Surrogate.git](https://github.com/YourUsername/Urban-Stormwater-GNN-Surrogate.git)
+    cd Urban-Stormwater-GNN-Surrogate
+    ```
+2.  **Install Dependencies**:
+    It is highly recommended to use a virtual environment. Once inside your project directory and with your virtual environment active (or managing dependencies globally), install all required Python packages:
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *Note: If you plan to use a GPU, ensure your CUDA Toolkit version is compatible with the `torch` version specified in `requirements.txt`. If you encounter issues or do not have a compatible GPU, consider installing the CPU-only version of PyTorch and PyTorch Geometric packages by manually adjusting `requirements.txt` before installation.*
+
+### Configuration
+
+The `config.yml` file is central to customizing the entire workflow. It defines paths, feature sets, model architecture, training hyperparameters, and more.
+
+* **Review `config.yml`**: Before running any scripts, open `config.yml` and review the paths under the `data` and `checkpoint` sections. These are set using **relative paths** to the repository root but might need adjustment based on your local data storage.
+* **Wandb Integration**: The `wandb` section allows you to configure Weights & Biases for experiment tracking. Update `project` and `entity` as needed, or comment out the `wandb.init()` call in `GNN_train_final.py` if you don't wish to use it.
+
+---
+
+## Citation
+
+If you use this code or the concepts from this paper in your research, please cite our work:
+
+**Zandsalimi, Z.**, Taghizadeh, M., Lee Lynn, S., Goodall, J.L., Shafiee-J., M., Alemazkoor, N., 2025. **End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems.** *Water Research*. (Under Review).
+
+```bibtex
+@article{zandsalimi2025GNN-SWS,
+  title={{End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems}},
+  author={Zandsalimi, Zanko and Taghizadeh, Mehdi and Lee Lynn, S. and Goodall, Jonathan L. and Shafiee-Jood, Majid and Alemazkoor, Negin},
+  journal={Water Research},
+  year={2025},
+  note={Under Review},
+  publisher={Elsevier}
+}
