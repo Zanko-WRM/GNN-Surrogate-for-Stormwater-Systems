@@ -22,7 +22,7 @@ This module automates the creation of training and evaluation data for the GNN-S
   
 All outputs are saved in structured text files under **export_data/**, which serve as inputs to the GNN model.
 
-The data preparation process involves several key steps orchestrated by `data_processing_conduits.py`:
+The data preparation process involves several key steps orchestrated by `data_processing.py`:
 1.  **SWMM Data Loading**: Raw SWMM simulation outputs (e.g., `junctions_depth.txt`, `conduits_flow.txt`) and static network configuration files (`subcatchments.txt`, `junctions.txt`, `conduits.txt`, `outfalls.txt`) are loaded.
 2.  **Feature Engineering**:
     * The `conduits.txt` file is augmented with an 'Area' column derived from 'MaxDepth' (assuming a circular cross-section).
@@ -62,13 +62,13 @@ The GNN-SWS model (implemented in `GNN_models.py`) adopts an **Encode-Process-De
 
 ## Training Process
 
-The training of the GNN-SWS model (orchestrated by `GNN_train_final.py` and utilizing `GNN_utils_final.py`) employs a sophisticated **pushforward training strategy** designed for robust long-term hydraulic prediction. This strategy addresses the challenge of accumulating errors in recursive multi-step forecasts by combining two distinct learning objectives:
+The training of the GNN-SWS model (orchestrated by `GNN_train.py` and utilizing `GNN_utils.py`) employs a sophisticated **pushforward training strategy** designed for robust long-term hydraulic prediction. This strategy addresses the challenge of accumulating errors in recursive multi-step forecasts by combining two distinct learning objectives:
 
 * **Ground-Truth Guided Learning**: The model is trained to accurately predict future hydraulic states based on sequences where input features are updated with **ground truth** data at each step. This ensures the model learns the correct short-term dynamics when provided with accurate historical context.
 * **Recursive Stability Learning**: Simultaneously, the model is trained on scenarios where it must recursively use its **own predictions** from previous steps as input for subsequent predictions within the forecast horizon. This explicitly penalizes error propagation and enhances the model's ability to maintain stability and accuracy during extended rollouts where ground truth is unavailable.
 
 **Loss Function:**
-The detailed definition and components of the loss function can be found in `GNN_utils_final.py`.
+The detailed definition and components of the loss function can be found in `GNN_utils.py`.
 
 **Optimization:**
 The model is trained using the Adam optimizer with a configured learning rate and weight decay, and a `StepLR` scheduler is used to adjust the learning rate during training. Wandb (Weights & Biases) is integrated for comprehensive experiment tracking and visualization of training and validation metrics. Checkpointing mechanisms allow saving and loading model states for resuming training or deploying the best-performing model.
