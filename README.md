@@ -75,7 +75,7 @@ The model is trained using the Adam optimizer with a configured learning rate an
 
 ## Testing Process
 
-The GNN-SWS model's performance on unseen events is evaluated using a **multi-step rollout prediction** approach, implemented in `Test_rollout.py` and powered by `rollout_prediction.py`. This process simulates real-world forecasting where the model recursively uses its own predictions to generate long-term forecasts.
+The GNN-SWS model's performance on unseen events is evaluated using a **multi-step rollout prediction** approach, implemented in `GNN_test.py` and powered by `rollout_prediction.py`. This process simulates real-world forecasting where the model recursively uses its own predictions to generate long-term forecasts.
 
 ![Rollout Prediction Process](https://github.com/user-attachments/assets/ffb8cb90-fe78-4c39-babb-f2870e3dd13a)
 **Illustration of the Rollout Prediction Process.** 
