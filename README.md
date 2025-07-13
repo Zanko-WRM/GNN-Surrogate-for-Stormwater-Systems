@@ -43,11 +43,9 @@ The data preparation process involves several key steps orchestrated by `data_pr
 ## Model Architecture
 The GNN-SWS model (implemented in `GNN_models.py`) adopts an **Encode-Process-Decode** architecture, specifically designed for joint prediction of both node and edge states in stormwater networks.
 
-<img width="3191" height="2528" alt="Fig4_V5" src="https://github.com/user-attachments/assets/a69f9e8e-d524-4a0f-9c76-e65f93b6b848" />
-
-![Model Structure Diagram](https://github.com/YourGitHubUsername/YourRepoName/blob/main/assets/model_structure.png)
-*Figure 2: Conceptual overview of the GNN-SWS model architecture.*
-
+![Model Structure Diagram](https://github.com/user-attachments/assets/a69f9e8e-d524-4a0f-9c76-e65f93b6b848)
+**Conceptual overview of the GNN-SWS model architecture.**
+<be>
 
 * **Encoder (`Encoder` class)**: This module projects the raw input node and edge features into a higher-dimensional latent space.
     * It features **separate processing branches for different node types**: "type_a" nodes (those with subcatchment contributions) use their full feature set, while "type_b" nodes (those without) have specific, irrelevant static features dynamically removed before encoding. This allows the model to effectively learn distinct representations for different hydrological roles within the network.
@@ -63,24 +61,51 @@ The GNN-SWS model (implemented in `GNN_models.py`) adopts an **Encode-Process-De
 * **Output Residual Connections**: The overall `EncodeProcessDecodeDual` model incorporates residual connections at the output layer. The GNN predicts the *change* in hydraulic states, which is then added to the last known state from the input features to produce the final prediction. This technique significantly improves numerical stability and physical consistency in time-series predictions.
 
 ## Training Process
-The training of the GNN-SWS model (orchestrated by `GNN_train_final.py` and utilizing `GNN_utils_final.py`) employs a sophisticated **pushforward training strategy** designed for robust long-term hydraulic prediction.
 
-The training objective combines two distinct loss components:
+The training of the GNN-SWS model (orchestrated by `GNN_train_final.py` and utilizing `GNN_utils_final.py`) employs a sophisticated **pushforward training strategy** designed for robust long-term hydraulic prediction. This strategy addresses the challenge of accumulating errors in recursive multi-step forecasts by combining two distinct learning objectives:
 
-1.  **Real Loss Branch**:
-    * In this branch, for each time step in the multi-step prediction horizon (`max_steps_ahead`), the model makes a prediction.
-    * For subsequent predictions within the same horizon, the input features are updated by "shifting" the time window and appending the **ground truth** values for the actual next state from the SWMM simulation. This ensures the model learns to predict accurately when provided with true historical context.
-2.  **Stability Loss Branch**:
-    * This branch is critical for enhancing the model's stability and performance during long-term, recursive rollouts (where ground truth is unavailable).
-    * For the *first* prediction step in this branch, the input features are prepared as if the model were making a real-time forecast (i.e., using the model's *own* previously predicted state for the current time `t` to inform the prediction for `t+1`).
-    * For all subsequent steps within the `max_steps_ahead` horizon, the model recursively uses its **own predictions** from the previous step as input for the next, mimicking a true rollout scenario.
-    * The loss from this branch explicitly penalizes deviations when the model is forced to rely on its own errors, thereby improving its long-term stability.
+* **Ground-Truth Guided Learning**: The model is trained to accurately predict future hydraulic states based on sequences where input features are updated with **ground truth** data at each step. This ensures the model learns the correct short-term dynamics when provided with accurate historical context.
+* **Recursive Stability Learning**: Simultaneously, the model is trained on scenarios where it must recursively use its **own predictions** from previous steps as input for subsequent predictions within the forecast horizon. This explicitly penalizes error propagation and enhances the model's ability to maintain stability and accuracy during extended rollouts where ground truth is unavailable.
 
-**Loss Function (`swmm_gnn_loss` in `GNN_utils_final.py`):**
-The total loss is a weighted sum of the Real Loss and the Stability Loss. The `swmm_gnn_loss` function provides flexibility, allowing configuration of `mse`, `mae`, or a `hybrid` loss (combining relative MSE and MAE).
-Key physics-guided components of the loss function include:
-* **Negative Value Penalties**: A penalty term (`F.relu(-prediction)`) is added to discourage the model from predicting non-physical negative values for hydraulic head and depth, promoting physical consistency.
-* **Difference Loss (`diff_loss`)**: This term penalizes discrepancies in the *differences* of predicted hydraulic states (head, inflow) between connected nodes. This encourages the model to learn accurate hydraulic gradients and flow patterns across conduits, further enforcing physical laws.
+**Loss Function:**
+The detailed definition and components of the loss function can be found in `GNN_utils_final.py`.
 
 **Optimization:**
 The model is trained using the Adam optimizer with a configured learning rate and weight decay, and a `StepLR` scheduler is used to adjust the learning rate during training. Wandb (Weights & Biases) is integrated for comprehensive experiment tracking and visualization of training and validation metrics. Checkpointing mechanisms allow saving and loading model states for resuming training or deploying the best-performing model.
+
+## Testing Process
+
+The GNN-SWS model's performance on unseen events is evaluated using a **multi-step rollout prediction** approach, implemented in `Test_rollout.py` and powered by `rollout_prediction.py`. This process simulates real-world forecasting where the model recursively uses its own predictions to generate long-term forecasts.
+
+![Rollout Prediction Process](https://github.com/user-attachments/assets/ffb8cb90-fe78-4c39-babb-f2870e3dd13a)
+**Illustration of the Rollout Prediction Process.** 
+
+
+The testing workflow generally involves:
+
+1.  **Loading Initial State**: For each held-out test event, an initial graph representing the system state at `t=0` is loaded, along with the full time series of future exogenous inputs (e.g., rainfall).
+2.  **Recursive Forecasting**: The trained model generates predictions one time step at a time. For each subsequent step, the model's own output from the previous step is fed back as input, along with the corresponding future exogenous data, to predict the next state. This continues for the entire duration of the event.
+3.  **Result Processing**: The raw model outputs are converted into a readable format (e.g., pandas DataFrames) and denormalized to their original physical scales if applicable.
+4.  **Saving Results**: The final, denormalized rollout predictions are saved for further analysis and comparison with ground truth data.
+
+This methodology provides a rigorous assessment of the model's ability to provide stable and accurate long-term forecasts in dynamic stormwater environments.
+
+## Interactive Dashboard
+
+To facilitate the exploration and analysis of the GNN-SWS model's predictions, an interactive web-based dashboard has been developed using Plotly Dash (`Dashboard.py`). This dashboard provides a comprehensive platform for visualizing model performance against SWMM simulations across various storm events and network elements.
+
+![Overview of the Interactive SWMM-GNN Dashboard](https://github.com/user-attachments/assets/9f57d92e-2d7b-4179-bb71-be5435c9791f)
+**Overview of the Interactive SWMM-GNN Dashboard.** 
+
+The dashboard offers the following key functionalities:
+
+* **Dynamic Data Selection**: Users can select the dataset split (Training, Validation, Testing), specific rainfall events, and hydraulic domains (Junctions or Conduits) to analyze.
+* **Network-Wide Error Visualization**: The main network graph spatially visualizes the model's performance. Nodes or conduits are colored according to selected error metrics (e.g., RMSE, NRMSE, Relative MAE, Correlation Coefficient, Nash–Sutcliffe Efficiency (NSE)), providing an immediate overview of areas with higher or lower model accuracy.
+* **Individual Element Time Series**: Upon clicking a specific junction or conduit in the network graph, a detailed time series plot is displayed, showing a direct comparison between the GNN-SWS predictions and the SWMM simulated "ground truth" for the selected hydraulic variable (e.g., depth, inflow, flow). For junctions, corresponding rainfall inputs are also visualized.
+* **Real-Time Error Metrics**: For the selected network element, a panel dynamically displays precise numerical values for all computed error metrics, offering quantitative insights into local model accuracy.
+* **Temporal Error Animation**: An interactive plot visualizes the evolution of average error (and its standard deviation) across the entire active network throughout a storm event. A time slider and animation controls allow users to observe how model performance varies dynamically over time.
+* **Comprehensive Help Guide**: A built-in modal provides detailed information about the research framework, a guide on how to use the dashboard's features, and clear explanations of all the error metrics used, including their mathematical formulas.
+
+The dashboard is designed to be a powerful tool for researchers and practitioners to intuitively understand the GNN-SWS model's behavior, identify areas of strong performance or potential limitations, and gain deeper insights into urban stormwater system dynamics.
+
+To run the dashboard, execute `Dashboard.py` directly after training the model and generating predictions.
