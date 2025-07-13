@@ -131,8 +131,7 @@ This section guides you through setting up the environment and running the GNN-S
     ```bash
     pip install -r requirements.txt
     ```
-    *Note: If you plan to use a GPU, ensure your CUDA Toolkit version is compatible with the `torch` version specified in `requirements.txt`. If you encounter issues or do not have a compatible GPU, consider installing the CPU-only version of PyTorch and PyTorch Geometric packages by manually adjusting `requirements.txt` before installation.*
-
+    *Note: If you plan to use a GPU, ensure your CUDA Toolkit version is compatible with the `torch` version specified in `requirements.txt`.
 ### Configuration
 
 The `config.yml` file is central to customizing the entire workflow. It defines paths, feature sets, model architecture, training hyperparameters, and more.
