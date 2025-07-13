@@ -43,6 +43,8 @@ The data preparation process involves several key steps orchestrated by `data_pr
 ## Model Architecture
 The GNN-SWS model (implemented in `GNN_models.py`) adopts an **Encode-Process-Decode** architecture, specifically designed for joint prediction of both node and edge states in stormwater networks.
 
+<img width="3191" height="2528" alt="Fig4_V5" src="https://github.com/user-attachments/assets/a69f9e8e-d524-4a0f-9c76-e65f93b6b848" />
+
 ![Model Structure Diagram](https://github.com/YourGitHubUsername/YourRepoName/blob/main/assets/model_structure.png)
 *Figure 2: Conceptual overview of the GNN-SWS model architecture.*
 
