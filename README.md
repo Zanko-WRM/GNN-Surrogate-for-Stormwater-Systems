@@ -23,18 +23,18 @@ This module automates the creation of training and evaluation data for the GNN-S
 All outputs are saved in structured text files under **export_data/**, which serve as inputs to the GNN model.
 
 The data preparation process involves several key steps orchestrated by `data_processing_conduits.py`:
-1.  **SWMM Data Loading**: Raw SWMM simulation outputs (e.g., `junctions_head.txt`, `conduits_flow.txt`) and static network configuration files (`subcatchments.txt`, `junctions.txt`, `conduits.txt`, `outfalls.txt`) are loaded.
+1.  **SWMM Data Loading**: Raw SWMM simulation outputs (e.g., `junctions_depth.txt`, `conduits_flow.txt`) and static network configuration files (`subcatchments.txt`, `junctions.txt`, `conduits.txt`, `outfalls.txt`) are loaded.
 2.  **Feature Engineering**:
     * The `conduits.txt` file is augmented with an 'Area' column derived from 'MaxDepth' (assuming a circular cross-section).
     * **Node-Level Features**: Static properties of junctions and outfalls are combined with aggregated features from connected subcatchments (e.g., total area, average imperviousness). This process distinguishes between "type_a" nodes (those with contributing subcatchments) and "type_b" nodes (those without), allowing for differentiated feature handling in the GNN encoder.
     * **Edge-Level Features**: Static properties of conduits (e.g., Length, Roughness, MaxDepth, Area) are used. Additionally, physics-guided features are computed, such as relative coordinates (`dx`, `dy`) between connected nodes, and differences in hydraulic head (`diff_head`) and inflow (`diff_inflow`) between an edge's 'From_Node' and 'To_Node'.
-    * **Dynamic Feature Windows**: Time-series data (e.g., rainfall, accumulated rainfall, head, inflow, flow, depth) is organized into sliding windows of `n_time_step` past observations for both nodes and edges.
+    * **Dynamic Feature Windows**: Time-series data (e.g., rainfall, accumulated rainfall, depth, inflow, flow) is organized into sliding windows of `n_time_step` past observations for both nodes and edges.
     * **Future Exogenous Inputs**: Separate "future rainfall" features are extracted for both nodes and edges, spanning `max_steps_ahead` into the future. These are critical for the pushforward training strategy as they provide necessary exogenous information when predicting beyond the initial time step.
 3.  **Graph Construction**: For each time step within an event, a `torch_geometric.data.Data` object is constructed. Each graph contains:
     * `x`: Node features (concatenation of constant and dynamic features).
     * `edge_index`: Graph connectivity (adjacency list).
     * `edge_attr`: Edge features (concatenation of constant and dynamic features).
-    * `y` and `y_edges`: Multi-step-ahead ground truth targets for nodes (head, inflow) and edges (flow, depth), respectively.
+    * `y` and `y_edges`: Multi-step-ahead ground truth targets for nodes (depth, inflow) and edges (flow, depth), respectively.
     * `future_rainfall` and `future_edge_rainfall`: The future exogenous rainfall inputs for nodes and edges, aligned with the prediction horizon.
     * `node_type`: A categorical label indicating whether a node is 'type_a' (with subcatchment contribution) or 'type_b' (without).
 4.  **Data Splitting**: The generated graphs are split into training, validation, and test sets. A key aspect is the **event-based split for the test set**, where entire rainfall events are held out to rigorously evaluate the model's generalization capabilities on unseen hydraulic conditions. The remaining events are then split on a graph (time-step) basis for training and validation.
