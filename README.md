@@ -138,7 +138,7 @@ This section guides you through setting up the environment and running the GNN-S
 The `config.yml` file is central to customizing the entire workflow. It defines paths, feature sets, model architecture, training hyperparameters, and more.
 
 * **Review `config.yml`**: Before running any scripts, open `config.yml` and review the paths under the `data` and `checkpoint` sections. These are set using **relative paths** to the repository root but might need adjustment based on your local data storage.
-* **Wandb Integration**: The `wandb` section allows you to configure Weights & Biases for experiment tracking. Update `project` and `entity` as needed, or comment out the `wandb.init()` call in `GNN_train_final.py` if you don't wish to use it.
+* **Wandb Integration**: The `wandb` section allows you to configure Weights & Biases for experiment tracking. Update `project` and `entity` as needed, or comment out the `wandb.init()` call in `GNN_train.py` if you don't wish to use it.
 
 ---
 
