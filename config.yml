@@ -1,0 +1,73 @@
+wandb:
+  project: "sws-gnn"
+  entity: "zanko-university-of-virginia" # Replace with your actual entity or make it configurable/optional
+
+data:
+  # Paths to raw SWMM input files
+  original_conduits_file: "data/raw_swmm_inputs/conduits.txt"
+  constant_data_dir: "data/constant_data" # Processed static features
+  dynamic_data_dir: "data/dynamic_data"   # SWMM time-series outputs
+
+  # Paths for processed graphs and metadata
+  precomputed_graph_dir: "processed_graphs/precomputed" # Full graphs saved after initial processing
+  train_graph_dir: "processed_graphs/train"             # Individual graphs for training
+  val_graph_dir: "processed_graphs/val"                 # Individual graphs for validation
+  test_graph_dir: "processed_graphs/test"               # Full event graphs for testing
+  initial_test_graph_dir: "processed_graphs/initial_test_graphs" # Initial graphs with full rainfall for rollout
+
+  use_precomputed_graphs: True  # Set to False to regenerate graphs
+  normalize_features: True      # Whether to normalize input features
+
+  # Directories for min-max normalization values (saved as JSON files)
+  global_min_max_dir: "data/global_metadata/global_min_max.json"
+  global_dif_min_max_dir: "data/global_metadata/global_dif_min_max.json"
+
+  gnn_predictions_dir: "results/gnn_predictions" # Directory to save GNN rollout predictions
+
+dynamic_features:
+  subcatchments: ["rainfall", "acc_rainfall"]
+  junctions: ["depth","inflow"]
+  conduits: ["flow", "depth"]
+
+constant_features:
+  subcatchments: ["Area", "Perc_Imperv", "Slope", "N_Imperv", "N_Perv"]
+  junctions: ["X", "Y", "Elevation", "MaxDepth"]
+  conduits: ["Length", "Roughness", "MaxDepth", "Area"]
+  outfalls: ["X", "Y", "Elevation"]
+
+computed_features:
+  conduits: ["dx", "dy"] # Computed attributes for conduits
+
+model:
+  model_type: "StandardGNN" # Currently supports "StandardGNN". Other types can be added.
+  latent_dim: 64            # Hidden dimension for node and edge embeddings
+  nmessage_passing_steps: 5 # Number of GNN layers
+  nmlp_layers: 3            # Number of layers in MLPs for StandardGNN
+  mlp_hidden_dim: 64        # Hidden size for MLP layers in StandardGNN
+  nedge_in_features: "AUTO" # Determined dynamically by data_processing
+  nnode_in_features: "AUTO" # Determined dynamically by data_processing
+  n_time_step: 3            # Number of previous steps used in input window
+  max_steps_ahead: 3        # Number of future steps to predict
+  residual: True            # Use residual connections in the model output
+  removal_indices: "AUTO"   # Determined dynamically for heterogeneous node processing
+
+training:
+  batch_size: 128
+  epochs: 1000
+  learning_rate: 0.001
+  weight_decay: 0                   # Regularization (L2 penalty)
+  scheduler_step: 64                # Learning rate decay step (epochs)
+  scheduler_gamma: 0.999            # Learning rate decay factor
+
+loss:
+  loss_type: "relative_mse"         # Options: "mse", "mae", "relative_mse", "hybrid"
+  apply_penalties: True             # Whether to apply physics-guided penalty terms (e.g., negative depth)
+  use_diff_loss: True               # Whether to apply difference loss across edges
+
+
+checkpoint:
+  save_dir: "checkpoints"           # Directory to save model checkpoints
+  save_every: 5                     # Save model every N epochs
+  log_dir: "logs/"
+
+
