@@ -1,4 +1,4 @@
-# End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems
+# End-to-End Graph Neural Networks for Real-Time Hydraulic Prediction in Stormwater Systems
 
 # Overview
 This repository presents Urban-Stormwater-GNN-Surrogate, a novel end-to-end Graph Neural Network (GNN) model designed for rainfall-driven, real-time hydraulic prediction in urban stormwater systems. It accurately emulates runoff generation and flow routing processes, providing predictions for hydraulic states (inflow, depth, and flow) at both network junctions and conduits. The model incorporates physics-guided constraints and a pushforward training strategy for enhanced stability and physical consistency.
@@ -149,7 +149,7 @@ If you use this code or the concepts from this paper in your research, please ci
 
 ```bibtex
 @article{zandsalimi2025GNN-SWS,
-  title={{End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems}},
+  title={{End-to-End Graph Neural Networks for Real-Time Hydraulic Prediction in Stormwater Systems}},
   author={Zandsalimi, Zanko and Taghizadeh, Mehdi and Lee Lynn, S. and Goodall, Jonathan L. and Shafiee-Jood, Majid and Alemazkoor, Negin},
   journal={Water Research},
   year={2025},
