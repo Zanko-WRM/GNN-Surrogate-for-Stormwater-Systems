@@ -145,13 +145,13 @@ The `config.yml` file is central to customizing the entire workflow. It defines 
 
 If you use this code or the concepts from this paper in your research, please cite our work:
 
-**Zandsalimi, Z.**, Taghizadeh, M., Lee Lynn, S., Goodall, J.L., Shafiee-J., M., Alemazkoor, N., 2025. **End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems.** *Water Research*. (Under Review).
+**Zandsalimi, Z.**, Taghizadeh, M., Lee Lynn, S., Goodall, J.L., Shafiee-J., M., Alemazkoor, N., 2025. **End-to-End Graph Neural Networks for Rainfall-Driven Real-Time Hydraulic Prediction in Stormwater Systems.** *Hydrology and Earth System Sciences*. (Under Review).
 
 ```bibtex
 @article{zandsalimi2025GNN-SWS,
   title={{End-to-End Graph Neural Networks for Real-Time Hydraulic Prediction in Stormwater Systems}},
   author={Zandsalimi, Zanko and Taghizadeh, Mehdi and Lee Lynn, S. and Goodall, Jonathan L. and Shafiee-Jood, Majid and Alemazkoor, Negin},
-  journal={Water Research},
+  journal={Hydrology and Earth System Sciences},
   year={2025},
   note={Under Review},
   publisher={Elsevier}
